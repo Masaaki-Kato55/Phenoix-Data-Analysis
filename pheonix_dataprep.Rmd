@@ -1,0 +1,549 @@
+---
+title: "Phoenix_housing_data_cleaning"
+author: "Masaaki Kato"
+date: "2/26/2022"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, include=FALSE}
+library(dplyr)
+library(tidyverse)
+library(readr)
+library(ggplot2)
+library(gridExtra)
+```
+## R Markdown
+
+```{r DataLoading, include=TRUE}
+# load data
+
+# demographic data
+sex_by_age <- read_csv("phoenix-az-sex-by-age.csv", show_col_types = FALSE)
+sex_by_edu <- read_csv("phoenix-az-sex-by-educational-attainment-for-the-population-25-years-and-over.csv", show_col_types = FALSE)
+
+# housing data
+tenure <- read_csv("phoenix-az-tenure.csv", show_col_types = FALSE)
+occupancy_status <- read_csv("phoenix-az-occupancy-status.csv", show_col_types = FALSE)
+
+# economic data
+poverty_status <- read_csv("phoenix-az-poverty-status.csv", show_col_types = FALSE)
+median_gross_rent <- read_csv("phoenix-az-median-gross-rent.csv", show_col_types = FALSE)
+median_income <- read_csv("phoenix-az-median-household-income.csv", show_col_types = FALSE)
+```
+
+## Data Cleaning:
+- The `poverty_status` table contains many unnecessary columns
+  - only include information for male/female age 18+
+  - split information for male and female 
+  - rename columns for easy view
+  
+```{r DataCleaning1.4, include=TRUE}
+poverty_status_male <- subset(poverty_status, select=c("geoid",
+                                                       "year",
+                                                       "Income at or above poverty level - Male",
+                                                      "Income below poverty level - Male",
+                                                      "Income at or above poverty level - Male - 18 to 24 years",
+                                                      "Income at or above poverty level - Male - 25 to 34 years",
+                                                      "Income at or above poverty level - Male - 35 to 44 years",
+                                                      "Income at or above poverty level - Male - 45 to 54 years",
+                                                      "Income at or above poverty level - Male - 55 to 64 years",
+                                                      "Income at or above poverty level - Male - 75 years and over",
+                                                      "Income below poverty level - Male - 18 to 24 years",
+                                                      "Income below poverty level - Male - 25 to 34 years",
+                                                      "Income below poverty level - Male - 35 to 44 years",
+                                                      "Income below poverty level - Male - 45 to 54 years",
+                                                      "Income below poverty level - Male - 55 to 64 years",
+                                                      "Income below poverty level - Male - 75 years and over"))
+names(poverty_status_male) <- c("geoid",
+                                "year",
+                                "male_income_above_total",
+                                "male_income_below_total",
+                                "male_income_above_18_24",
+                                "male_income_above_25_34",
+                                "male_income_above_35_44",
+                                "male_income_above_45_54",
+                                "male_income_above_55_64",
+                                "male_income_above_75_and_above",
+                                "male_income_below_18_24",
+                                "male_income_below_25_34",
+                                "male_income_below_35_44",
+                                "male_income_below_45_54",
+                                "male_income_below_55_64",
+                                "male_income_below_75_and_above")
+
+poverty_status_female <- subset(poverty_status, select=c("geoid",
+                                                       "year",
+                                                       "Income at or above poverty level - Female",
+                                                      "Income below poverty level - Female",
+                                                      "Income at or above poverty level - Female - 18 to 24 years",
+                                                      "Income at or above poverty level - Female - 25 to 34 years",
+                                                      "Income at or above poverty level - Female - 35 to 44 years",
+                                                      "Income at or above poverty level - Female - 45 to 54 years",
+                                                      "Income at or above poverty level - Female - 55 to 64 years",
+                                                      "Income at or above poverty level - Female - 75 years and over",
+                                                      "Income below poverty level - Female - 18 to 24 years",
+                                                      "Income below poverty level - Female - 25 to 34 years",
+                                                      "Income below poverty level - Female - 35 to 44 years",
+                                                      "Income below poverty level - Female - 45 to 54 years",
+                                                      "Income below poverty level - Female - 55 to 64 years",
+                                                      "Income below poverty level - Female - 75 years and over"))
+names(poverty_status_female) <- c("geoid",
+                                "year",
+                                "female_income_above_total",
+                                "female_income_below_total",
+                                "female_income_above_18_24",
+                                "female_income_above_25_34",
+                                "female_income_above_35_44",
+                                "female_income_above_45_54",
+                                "female_income_above_55_64",
+                                "female_income_above_75_and_above",
+                                "female_income_below_18_24",
+                                "female_income_below_25_34",
+                                "female_income_below_35_44",
+                                "female_income_below_45_54",
+                                "female_income_below_55_64",
+                                "female_income_below_75_and_above")
+poverty_status_male[1:3,2:6]
+```
+
+- The `sex_by_age` table contains unnecessary columns as well
+  - add people, 17 and below, into one column `sex_17_and_below`
+  - group people by age brackets similar to `poverty_status` (e.g., 18-24, 25-34, 45-54)
+  - split information by sex
+
+```{r DataCleaning2, include=TRUE}
+sex_by_age_temp <- sex_by_age
+names(sex_by_age_temp) <- str_replace_all(names(sex_by_age_temp), c(" " = "_")) # replace spaces with underscore in column names
+
+# re-categorizing age brackets
+sex_by_age_temp$male_17_and_below <- (sex_by_age_temp$Male_Under_5_years + sex_by_age_temp$Male_5_to_9_years 
+                                    + sex_by_age_temp$Male_10_to_14_years + sex_by_age_temp$Male_15_to_17_years)
+sex_by_age_temp$male_18_24 <- (sex_by_age_temp$Male_18_and_19_years + sex_by_age_temp$Male_20_years
+                             + sex_by_age_temp$Male_21_years + sex_by_age_temp$Male_22_to_24_years)
+sex_by_age_temp$male_25_34 <- (sex_by_age_temp$Male_25_to_29_years + sex_by_age_temp$Male_30_to_34_years)
+sex_by_age_temp$male_35_44 <- (sex_by_age_temp$Male_35_to_39_years + sex_by_age_temp$Male_40_to_44_years)
+sex_by_age_temp$male_45_54 <- (sex_by_age_temp$Male_45_to_49_years + sex_by_age_temp$Male_50_to_54_years)
+sex_by_age_temp$male_55_64 <- (sex_by_age_temp$Male_55_to_59_years + sex_by_age_temp$Male_60_and_61_years 
+                             + sex_by_age_temp$Male_62_to_64_years)
+sex_by_age_temp$male_65_74 <- (sex_by_age_temp$Male_65_and_66_years + sex_by_age_temp$Male_67_to_69_years
+                            + sex_by_age_temp$Male_70_to_74_years)
+sex_by_age_temp$male_75_and_above <- (sex_by_age_temp$Male_75_to_79_years + sex_by_age_temp$Male_80_to_84_years
+                                    + sex_by_age_temp$Male_85_years_and_over)
+
+sex_by_age_temp$female_17_and_below <- (sex_by_age_temp$Female_Under_5_years + sex_by_age_temp$Female_5_to_9_years 
+                                    + sex_by_age_temp$Female_10_to_14_years + sex_by_age_temp$Female_15_to_17_years)
+sex_by_age_temp$female_18_24 <- (sex_by_age_temp$Female_18_and_19_years + sex_by_age_temp$Female_20_years
+                             + sex_by_age_temp$Female_21_years + sex_by_age_temp$Female_22_to_24_years)
+sex_by_age_temp$female_25_34 <- (sex_by_age_temp$Female_25_to_29_years + sex_by_age_temp$Female_30_to_34_years)
+sex_by_age_temp$female_35_44 <- (sex_by_age_temp$Female_35_to_39_years + sex_by_age_temp$Female_40_to_44_years)
+sex_by_age_temp$female_45_54 <- (sex_by_age_temp$Female_45_to_49_years + sex_by_age_temp$Female_50_to_54_years)
+sex_by_age_temp$female_55_64 <- (sex_by_age_temp$Female_55_to_59_years + sex_by_age_temp$Female_60_and_61_years
+                            + sex_by_age_temp$Female_62_to_64_years)
+sex_by_age_temp$female_65_74 <- (sex_by_age_temp$Female_65_and_66_years + sex_by_age_temp$Female_67_to_69_years
+                            + sex_by_age_temp$Female_70_to_74_years)
+sex_by_age_temp$female_75_and_above <- (sex_by_age_temp$Female_75_to_79_years + sex_by_age_temp$Female_80_to_84_years
+                                    + sex_by_age_temp$Female_85_years_and_over)
+
+# subset only necessary columns
+sex_by_age_cleaned <- subset(sex_by_age_temp, select=c("geoid",
+                                                       "year",
+                                                       "male_17_and_below",
+                                                       "male_18_24",
+                                                       "male_25_34",
+                                                       "male_35_44",
+                                                       "male_45_54",
+                                                       "male_55_64",
+                                                       "male_65_74",
+                                                       "male_75_and_above",
+                                                       "female_17_and_below",
+                                                       "female_18_24",
+                                                       "female_25_34",
+                                                       "female_35_44",
+                                                       "female_45_54",
+                                                       "female_55_64",
+                                                       "female_65_74",
+                                                       "female_75_and_above"))
+
+# split info by sex
+sex_by_age_male <- subset(sex_by_age_cleaned, select=c("geoid",
+                                                       "year",
+                                                       "male_17_and_below",
+                                                       "male_18_24",
+                                                       "male_25_34",
+                                                       "male_35_44",
+                                                       "male_45_54",
+                                                       "male_55_64",
+                                                       "male_65_74",
+                                                       "male_75_and_above"))
+
+sex_by_age_female <- subset(sex_by_age_cleaned, select=c("geoid",
+                                                         "year",
+                                                         "female_17_and_below",
+                                                         "female_18_24",
+                                                         "female_25_34",
+                                                         "female_35_44",
+                                                         "female_45_54",
+                                                         "female_55_64",
+                                                         "female_65_74",
+                                                         "female_75_and_above"))
+sex_by_age_cleaned[1:3,2:6]
+```
+
+- The `sex_by_edu` table contains unnecessary columns as well
+  - only include education from highshcool and above
+  - split information by sex
+
+```{r DataCleaning5}
+
+sex_by_edu_cleaned <- subset(sex_by_edu, select=c("geoid",
+                                                  "year",
+                                                  "Male - 12th grade, no diploma",
+                                                  "Male - High school graduate, GED, or alternative",
+                                                  "Male - Some college, less than 1 year",
+                                                  "Male - Some college, 1 or more years, no degree",
+                                                  "Male - Associate's degree",
+                                                  "Male - Bachelor's degree",
+                                                  "Male - Master's degree",
+                                                  "Male - Professional school degree",
+                                                  "Male - Doctorate degree",
+                                                  "Female - 12th grade, no diploma",
+                                                  "Female - High school graduate, GED, or alternative",
+                                                  "Female - Some college, less than 1 year",
+                                                  "Female - Some college, 1 or more years, no degree",
+                                                  "Female - Associate's degree",
+                                                  "Female - Bachelor's degree",
+                                                  "Female - Master's degree",
+                                                  "Female - Professional school degree",
+                                                  "Female - Doctorate degree"))
+names(sex_by_edu_cleaned) <- c("geoid",
+                               "year",
+                               "male_12th_grade_no_diploma",
+                               "male_hs_graduate_ged_alt",
+                               "male_college_less_than_1_year",
+                               "male_college_1_or_more_year",
+                               "male_associate_degree",
+                               "male_bachelor_degree",
+                               "male_master_degree",
+                               "male_professional_school_degree",
+                               "male_doctorate_degree",
+                               "female_12th_grade_no_diploma",
+                               "female_hs_graduate_ged_alt",
+                               "female_college_less_than_1_year",
+                               "female_college_1_or_more_year",
+                               "female_associate_degree",
+                               "female_bachelor_degree",
+                               "female_master_degree",
+                               "female_professional_school_degree",
+                               "female_doctorate_degree")
+
+# seperate info by sex
+sex_by_edu_male <- subset(sex_by_edu_cleaned, select=c("geoid",
+                                                       "year",
+                                                       "male_12th_grade_no_diploma",
+                                                       "male_hs_graduate_ged_alt",
+                                                       "male_college_less_than_1_year",
+                                                       "male_college_1_or_more_year",
+                                                       "male_associate_degree",
+                                                       "male_bachelor_degree",
+                                                       "male_master_degree",
+                                                       "male_professional_school_degree",
+                                                       "male_doctorate_degree"))
+sex_by_edu_female <- subset(sex_by_edu_cleaned, select=c("geoid",
+                                                         "year",
+                                                         "female_12th_grade_no_diploma",
+                                                         "female_hs_graduate_ged_alt",
+                                                         "female_college_less_than_1_year",
+                                                         "female_college_1_or_more_year",
+                                                         "female_associate_degree",
+                                                         "female_bachelor_degree",
+                                                         "female_master_degree",
+                                                         "female_professional_school_degree",
+                                                         "female_doctorate_degree"))
+sex_by_edu_cleaned[1:3,2:6]
+```
+
+- Renaming column names for `tenure`, `median_gross_rent`, and `median_income`. Mainly removing spaces
+
+```{r DataCleaning, include=TRUE}
+# Renaming columns (i.e., removing spaces)
+tenure_cleaned <- tenure
+names(tenure_cleaned) <- c("geoid", "year", "owner_occupied", "renter_occupied")
+
+median_gross_rent_cleaned <- median_gross_rent
+names(median_gross_rent_cleaned) <- c("geoid","year","median_gross_rent")
+
+median_income_cleaned <- median_income
+names(median_income_cleaned) <- c("geoid","year","median_income")
+
+occupancy_status_cleaned <- occupancy_status
+names(occupancy_status_cleaned) <- c("geoid", "year", "total_housing_units", "occupied_housing_units", "vacant_housing_units")
+```
+
+## Visual Graphics
+
+```{r simplePlot}
+# plot of tenure status 
+legends_tenure <- c("Renter Occupied"="#808080","Owner Occupied"="#0000FF")
+ggplot(data=tenure_cleaned, aes(x=year)) + 
+       geom_line(aes(y =owner_occupied,colour="#0000FF"),colour="#0000FF", size=1.5) + 
+       geom_line(aes(y=renter_occupied,colour="#808080"), size=1.5) +
+       scale_x_discrete(limits = c(2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019, 2020), 
+                        expand=expansion(mult=c(0.1, .1))) + 
+       scale_colour_manual(name="Variable",values = legends_tenure) +
+       labs(title="Tenure Status", subtitle="Pheonix, Arizona", x="Year", y="Households") +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+
+```
+
+
+```{r Plot1, include=TRUE}
+
+# plot of median gross rent
+ggplot(data=median_gross_rent_cleaned, aes(x=year,y=median_gross_rent)) +
+       geom_line(colour='blue', size=1.5) +
+       scale_x_discrete(limits = c(2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019, 2020), 
+                        expand=expansion(mult=c(0.1, .1))) + 
+       labs(title="Median Gross Rent", subtitle="Pheonix, Arizona", x="Year", y="Median Gross Rent") +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+```
+
+
+```{r Plot2, include=TRUE}
+
+# plot of median income
+ggplot(data=median_income_cleaned, aes(x=year,y=median_income)) +
+       geom_line(colour='blue', size=1.5) +
+       scale_x_discrete(limits = c(2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019, 2020), 
+                        expand=expansion(mult=c(0.1, .1))) + 
+       labs(title="Median Income", subtitle="Pheonix, Arizona", x="Year", y="Median Income") +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+```
+
+
+```{r Plot3, include=TRUE}
+
+# plot of occupancy status
+occupied_plot <- ggplot(data=occupancy_status_cleaned, aes(x=year,y=occupied_housing_units)) +
+                       geom_line(colour='blue', size=1.5) +
+                       scale_x_discrete(limits = c(2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019, 2020),
+                                        expand=expansion(mult=c(0.1, .1))) + 
+                       labs(title="Occupancy Status", subtitle="Pheonix, Arizona", x="", y="Occupied Housing Units") +
+                       theme(plot.title = element_text(hjust = 0.5),
+                             plot.subtitle = element_text(hjust = 0.5))
+vacant_plot <- ggplot(data=occupancy_status_cleaned, aes(x=year,y=vacant_housing_units)) +
+                      geom_line(colour='blue', size=1.5) +
+                      scale_x_discrete(limits = c(2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019, 2020),
+                                       expand=expansion(mult=c(0.1, .1))) + 
+                      labs(x="Year", y="Vacant Housing Units") +
+                      theme(plot.title = element_text(hjust = 0.5),
+                            plot.subtitle = element_text(hjust = 0.5))
+
+# plot side by side
+grid.arrange(occupied_plot, vacant_plot)
+```
+
+### Sex by Education
+```{r plot4}
+
+# format data
+# Format Data to convert each education degree as a categorical variable
+sex_by_edu_male_long <- sex_by_edu_male %>%
+  pivot_longer(male_12th_grade_no_diploma:male_doctorate_degree, names_to = "education", values_to = "population")
+
+# subsetting data because population differences is too wide between some degrees
+sex_by_edu_male_long1 <- subset(sex_by_edu_male_long, education %in% c("male_bachelor_degree",
+                                                                    "male_college_1_or_more_year",
+                                                                    "male_hs_graduate_ged_alt") )
+sex_by_edu_male_long2 <- subset(sex_by_edu_male_long, education %in% c("male_12th_grade_no_diploma",
+                                                                    "male_college_less_than_1_year",
+                                                                    "male_associate_degree",
+                                                                    "male_professional_school_degree",
+                                                                    "male_master_degree",
+                                                                    "male_doctorate_degree") )
+
+# plot graph
+ggplot(data = sex_by_edu_male_long1, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Educational Attainment (Male)",
+            subtitle = "Pheonix, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ education) +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+ggplot(data = sex_by_edu_male_long2, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Educational Attainment (Male)",
+            subtitle = "Population, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ education) +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+```
+
+```{r Plot5, include=TRUE}
+# Format Data to convert each education degree as a categorical variable
+sex_by_edu_female_long <- sex_by_edu_female %>%
+  pivot_longer(female_12th_grade_no_diploma:female_doctorate_degree, names_to = "education", values_to = "population")
+
+# subsetting data because population differences is too wide between some degrees
+sex_by_edu_female_long1 <- subset(sex_by_edu_female_long, education %in% c("female_bachelor_degree",
+                                                                    "female_college_1_or_more_year",
+                                                                    "female_hs_graduate_ged_alt") )
+sex_by_edu_female_long2 <- subset(sex_by_edu_female_long, education %in% c("male_12th_grade_no_diploma",
+                                                                    "female_college_less_than_1_year",
+                                                                    "female_associate_degree",
+                                                                    "female_professional_school_degree",
+                                                                    "female_master_degree",
+                                                                    "female_doctorate_degree") )
+
+# plot graph
+ggplot(data = sex_by_edu_female_long1, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Educational Attainment (Female)",
+            subtitle = "Pheonix, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ education) +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+ggplot(data = sex_by_edu_female_long2, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Educational Attainment (Female)",
+            subtitle = "Population, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ education)  +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+```
+
+### Sex by age
+
+```{r plot6, include=TRUE}
+# plot for sex by age
+# Format Data to convert each age bracket as a categorical variable
+sex_by_age_female_long <- sex_by_age_female %>%
+  pivot_longer(female_17_and_below:female_75_and_above, names_to = "age_bracket", values_to = "population")
+
+# plot graph
+ggplot(data = sex_by_age_female_long, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Age Bracket (Female)",
+            subtitle = "Pheonix, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ age_bracket)  +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+
+```
+
+```{r echo, include=TRUE}
+# plot for sex by age
+# Format Data to convert each age bracket as a categorical variable
+sex_by_age_male_long <- sex_by_age_male %>%
+  pivot_longer(male_17_and_below:male_75_and_above, names_to = "age_bracket", values_to = "population")
+
+# plot graph
+ggplot(data = sex_by_age_male_long, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Age Bracket (Male)",
+            subtitle = "Pheonix, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ age_bracket)  +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+```
+
+### Poverty Status by Sex
+```{r plot7, include=TRUE}
+# plot for sex by poverty status (above poverty, below poverty)
+# Format Data to convert each poverty status as a categorical variable
+poverty_status_male_long_above <- poverty_status_male %>%
+  pivot_longer(male_income_above_18_24:male_income_above_75_and_above, names_to = "age_bracket", values_to = "population")
+poverty_status_male_long_below <- poverty_status_male %>%
+  pivot_longer(male_income_below_18_24:male_income_below_75_and_above, names_to = "age_bracket", values_to = "population")
+
+
+# plot graph
+ggplot(data = poverty_status_male_long_above, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Age Bracket for Males Above Poverty",
+            subtitle = "Pheonix, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ age_bracket)  +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+
+ggplot(data = poverty_status_male_long_below, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Age Bracket for Males Below Poverty",
+            subtitle = "Pheonix, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ age_bracket)  +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+```
+
+```{r plot8, include=TRUE}
+# plot for sex by poverty status (above poverty, below poverty)
+# Format Data to convert each poverty status as a categorical variable
+poverty_status_female_long_above <- poverty_status_female %>%
+  pivot_longer(female_income_above_18_24:female_income_above_75_and_above, names_to = "age_bracket", values_to = "population")
+poverty_status_female_long_below <- poverty_status_female %>%
+  pivot_longer(female_income_below_18_24:female_income_below_75_and_above, names_to = "age_bracket", values_to = "population")
+
+
+# plot graph
+ggplot(data = poverty_status_female_long_above, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Age Bracket (Male) for Above Poverty",
+            subtitle = "Pheonix, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ age_bracket)  +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+
+ggplot(data = poverty_status_female_long_below, aes(year, population)) +
+       geom_line(color = "steelblue", size = 1) +
+       geom_point(color="steelblue") + 
+       labs(title = "Age Bracket (Male) for Below Poverty",
+            subtitle = "Pheonix, Arizona",
+            y = "Population", x = "Year") + 
+       facet_wrap(~ age_bracket)  +
+       theme(plot.title = element_text(hjust = 0.5),
+             plot.subtitle = element_text(hjust = 0.5))
+```
+
+```{r ExportData, include=FALSE}
+write_csv(poverty_status_male, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\poverty_status_male.csv")
+write_csv(poverty_status_female, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\poverty_status_female.csv")
+
+write_csv(sex_by_age_cleaned, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\sex_by_age_cleaned.csv")
+write_csv(sex_by_age_male, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\sex_by_age_male.csv")
+write_csv(sex_by_age_female, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\sex_by_age_female.csv")
+write_csv(sex_by_edu_cleaned, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\sex_by_edu_cleaned.csv")
+write_csv(sex_by_edu_male, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\sex_by_edu_male.csv")
+write_csv(sex_by_edu_female, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\sex_by_edu_female.csv")
+
+write_csv(tenure_cleaned, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\tenure_cleaned.csv")
+write_csv(median_gross_rent_cleaned, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\median_gross_rent_cleaned.csv")
+write_csv(median_income_cleaned, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\median_income_cleaned.csv")
+write_csv(occupancy_status_cleaned, "C:\\Users\\mkpanda\\Desktop\\dojo\\projects\\phoenix_housing_inR\\occupancy_status_cleaned.csv")
+```
