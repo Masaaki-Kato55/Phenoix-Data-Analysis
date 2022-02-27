@@ -1,4 +1,4 @@
-# Pheonix Data Analysis / Dashboard
+# Phoenix Data Analysis / Dashboard
 
 ## Introduction
 - This project was inspired after reading this [article](https://azpbs.org/horizon/2022/01/arizonas-housing-shortage-is-making-for-higher-home-prices/), which details the severe housing shortage Arizona is currently experiencing. 
@@ -19,4 +19,4 @@
 - The age demographic is relatively stable in this past decade with a slight increase in the older generations.
 - Poverty levels have also dropped with more people above the poverty line and less below the poverty line.
 - Overall, there is nothing in the general data to suggest a housing shortage
-- However, the data does suggest a general population growth and prosperity. This may mean that Pheonix has become a more attractive destination. 
+- However, the data does suggest a general population growth and prosperity. This may mean that Phoenix has become a more attractive destination. 
