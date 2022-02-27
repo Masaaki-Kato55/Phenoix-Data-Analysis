@@ -1,4 +1,4 @@
-# Phenoix Data Analysis / Dashboard
+# Pheonix Data Analysis / Dashboard
 
 ## Introduction
 - This project was inspired after reading this [article](https://azpbs.org/horizon/2022/01/arizonas-housing-shortage-is-making-for-higher-home-prices/), which details the severe housing shortage Arizona is currently experiencing. 
