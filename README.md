@@ -8,7 +8,7 @@
     - The modified datasets can be found in `data/cleaned`
 - All analysis and graphics were conducted using R.
     - There is both a pdf version of the Rmd file in the main directory and the original Rmd file under `code`
-- Additionally, I compiled my results in a dashboard, which can be accessed [here](https://rpubs.com/mkato124/871541)
+- Additionally, I compiled my results in a dashboard, which can be accessed [here](https://rpubs.com/mkato124/871810)
     - The code for this dashboard is also under `code`
 
 ## Finding
