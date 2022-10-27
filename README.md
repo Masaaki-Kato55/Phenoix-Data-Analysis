@@ -13,7 +13,7 @@
 
 ## Finding
 - The median income increased $10,000 in this past decade, while the median gross rent has increased $200. 
-    - To put this into perspective, the US median is $1,097 in 2019 and the NY median is #1,309 ([source](https://www.deptofnumbers.com/rent/new-york/))
+    - To put this into perspective, the US median is $1,097 in 2019 and the NY median is $1,309 ([source](https://www.deptofnumbers.com/rent/new-york/))
 - Occupied housing units have soared in this past decade, while vacant housing units have dropped at a similar pace. This suggests that the bought homes go straight to the consumer rather than large corporations
 - Concerning education, there are increases across multiple degrees (Bachelor, associate, masters, GED)
 - The age demographic is relatively stable in this past decade with a slight increase in the older generations.
