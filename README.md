@@ -8,11 +8,11 @@
     - The modified datasets can be found in `data/cleaned`
 - All analysis and graphics were conducted using R.
     - There is both a pdf version of the Rmd file in the main directory and the original Rmd file under `code`
-- Additionally, I compiled my results in a dashboard, which can be accessed [here](https://rpubs.com/mkato124/871810)
+- Additionally, I compiled my results in a dashboard, which can be accessed [here](https://rpubs.com/mkato124/963718)
     - The code for this dashboard is also under `code`
 
 ## Finding
-- The median income increased $10,000 in this past decade to 60931, while the median gross rent has increased $200. 
+- The median income increased $10,000 in this past decade to $60931, while the median gross rent has increased $200. 
     - To put this into perspective, the US median is $69,560 in 2019 ([source](https://www.census.gov/library/publications/2021/demo/p60-273.html))
 - Occupied housing units have soared in this past decade, while vacant housing units have dropped at a similar pace. This suggests that the bought homes go straight to the consumer rather than large corporations
 - Concerning education, there are increases across multiple degrees (Bachelor, associate, masters, GED)

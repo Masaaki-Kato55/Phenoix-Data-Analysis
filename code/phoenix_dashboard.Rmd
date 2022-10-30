@@ -1,5 +1,5 @@
 ---
-title: "Phoenix General Data Dashboard (2008-2020)"
+title: "Phoenix General Data Dashboard (2008-2019)"
 output: 
   flexdashboard::flex_dashboard:
     orientation: column
@@ -48,7 +48,7 @@ ggplot(data=tenure_cleaned, aes(x=year)) +
        scale_x_discrete(limits = c(2008,2010,2012,2014,2016,2018,2020), 
                         expand=expansion(mult=c(0.1, .1))) + 
        scale_colour_manual(name="Variable",values = legends_tenure) +
-       labs(title="Tenure Status", subtitle="Phoenix, Arizona (2008-2020)", x="Year", y="Households") +
+       labs(title="Tenure Status", subtitle="Phoenix, Arizona (2008-2019)", x="Year", y="Households") +
        theme(plot.title = element_text(hjust = 0.5),
              plot.subtitle = element_text(hjust = 0.5))
 ```
@@ -61,7 +61,7 @@ occupied_plot <- ggplot(data=occupancy_status_cleaned, aes(x=year,y=occupied_hou
                        geom_line(colour='blue', size=1.5) +
                        scale_x_discrete(limits = c(2008,2010,2012,2014,2016,2018,2020),
                                         expand=expansion(mult=c(0.1, .1))) + 
-                       labs(title="Occupancy Status", subtitle="Phoenix, Arizona (2008-2020)", x="", y="Occupied Housing Units") +
+                       labs(title="Occupancy Status", subtitle="Phoenix, Arizona (2008-2019)", x="", y="Occupied Housing Units") +
                        theme(plot.title = element_text(hjust = 0.5),
                              plot.subtitle = element_text(hjust = 0.5))
 vacant_plot <- ggplot(data=occupancy_status_cleaned, aes(x=year,y=vacant_housing_units)) +
@@ -87,7 +87,7 @@ ggplot(data=median_gross_rent_cleaned, aes(x=year,y=median_gross_rent)) +
        geom_line(colour='blue', size=1.5) +
        scale_x_discrete(limits = c(2008,2010,2012,2014,2016,2018,2020), 
                         expand=expansion(mult=c(0.1, .1))) + 
-       labs(title="Median Gross Rent", subtitle="Phoenix, Arizona (2008-2020)", x="Year", y="Median Gross Rent") +
+       labs(title="Median Gross Rent", subtitle="Phoenix, Arizona (2008-2019)", x="Year", y="Median Gross Rent") +
        theme(plot.title = element_text(hjust = 0.5),
              plot.subtitle = element_text(hjust = 0.5))
 ```
@@ -100,7 +100,7 @@ ggplot(data=median_income_cleaned, aes(x=year,y=median_income)) +
        geom_line(colour='blue', size=1.5) +
        scale_x_discrete(limits = c(2008,2010,2012,2014,2016,2018,2020), 
                         expand=expansion(mult=c(0.1, .1))) + 
-       labs(title="Median Income", subtitle="Phoenix, Arizona (2008-2020)", x="Year", y="Median Income") +
+       labs(title="Median Income", subtitle="Phoenix, Arizona (2008-2019)", x="Year", y="Median Income") +
        theme(plot.title = element_text(hjust = 0.5),
              plot.subtitle = element_text(hjust = 0.5))
 ```
@@ -134,7 +134,7 @@ ggplot(data = sex_by_edu_male_long1, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
        labs(title = "Educational Attainment (Male)",
-            subtitle = "Phoenix, Arizona (2008-2020)",
+            subtitle = "Phoenix, Arizona (2008-2019)",
             y = "Population", x = "Year") + 
        facet_wrap(~ education) +
        theme(plot.title = element_text(hjust = 0.5),
@@ -149,7 +149,7 @@ ggplot(data = sex_by_edu_male_long1, aes(year, population)) +
 ggplot(data = sex_by_edu_male_long2, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
-       labs(title = "Educational Attainment (Male) (2008-2020)",
+       labs(title = "Educational Attainment (Male) (2008-2019)",
             subtitle = "Phoenix, Arizona",
             y = "Population", x = "Year") + 
        facet_wrap(~ education) +
@@ -184,7 +184,7 @@ ggplot(data = sex_by_edu_female_long1, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
        labs(title = "Educational Attainment (Female)",
-            subtitle = "Phoenix, Arizona (2008-2020)",
+            subtitle = "Phoenix, Arizona (2008-2019)",
             y = "Population", x = "Year") + 
        facet_wrap(~ education) +
        theme(plot.title = element_text(hjust = 0.5),
@@ -199,7 +199,7 @@ ggplot(data = sex_by_edu_female_long2, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
        labs(title = "Educational Attainment (Female)",
-            subtitle = "Phoenix, Arizona (2008-2020)",
+            subtitle = "Phoenix, Arizona (2008-2019)",
             y = "Population", x = "Year") + 
        facet_wrap(~ education)  +
        theme(plot.title = element_text(hjust = 0.5),
@@ -226,7 +226,7 @@ ggplot(data = sex_by_age_male_long, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
        labs(title = "Age Bracket (Male)",
-            subtitle = "Phoenix, Arizona (2008-2020)",
+            subtitle = "Phoenix, Arizona (2008-2019)",
             y = "Population", x = "Year") + 
        facet_wrap(~ age_bracket)  +
        theme(plot.title = element_text(hjust = 0.5),
@@ -250,7 +250,7 @@ ggplot(data = sex_by_age_female_long, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
        labs(title = "Age Bracket (Female)",
-            subtitle = "Phoenix, Arizona (2008-2020)",
+            subtitle = "Phoenix, Arizona (2008-2019)",
             y = "Population", x = "Year") + 
        facet_wrap(~ age_bracket)  +
        theme(plot.title = element_text(hjust = 0.5),
@@ -279,7 +279,7 @@ ggplot(data = poverty_status_male_long_above, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
        labs(title = "Age Bracket for Males Above Poverty",
-            subtitle = "Phoenix, Arizona (2008-2020)",
+            subtitle = "Phoenix, Arizona (2008-2019)",
             y = "Population", x = "Year") + 
        facet_wrap(~ age_bracket)  +
        theme(plot.title = element_text(hjust = 0.5),
@@ -294,7 +294,7 @@ ggplot(data = poverty_status_male_long_below, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
        labs(title = "Age Bracket for Males Below Poverty",
-            subtitle = "Phoenix, Arizona (2008-2020)",
+            subtitle = "Phoenix, Arizona (2008-2019)",
             y = "Population", x = "Year") + 
        facet_wrap(~ age_bracket)  +
        theme(plot.title = element_text(hjust = 0.5),
@@ -321,7 +321,7 @@ ggplot(data = poverty_status_female_long_above, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
        labs(title = "Age Bracket for Females Above Poverty",
-            subtitle = "Phoenix, Arizona (2008-2020)",
+            subtitle = "Phoenix, Arizona (2008-2019)",
             y = "Population", x = "Year") + 
        facet_wrap(~ age_bracket)  +
        theme(plot.title = element_text(hjust = 0.5),
@@ -336,7 +336,7 @@ ggplot(data = poverty_status_female_long_below, aes(year, population)) +
        geom_line(color = "steelblue", size = 1) +
        geom_point(color="steelblue") + 
        labs(title = "Age Bracket for Females Below Poverty",
-            subtitle = "Phoenix, Arizona (2008-2020)",
+            subtitle = "Phoenix, Arizona (2008-2019)",
             y = "Population", x = "Year") + 
        facet_wrap(~ age_bracket)  +
        theme(plot.title = element_text(hjust = 0.5),
