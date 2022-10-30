@@ -25,17 +25,17 @@ library(gridExtra)
 # load data
 
 # demographic data
-sex_by_age <- read_csv("phoenix-az-sex-by-age.csv", show_col_types = FALSE)
-sex_by_edu <- read_csv("phoenix-az-sex-by-educational-attainment-for-the-population-25-years-and-over.csv", show_col_types = FALSE)
+sex_by_age <- read_csv("data/phoenix-az-sex-by-age.csv", show_col_types = FALSE)
+sex_by_edu <- read_csv("data/phoenix-az-sex-by-educational-attainment-for-the-population-25-years-and-over.csv", show_col_types = FALSE)
 
 # housing data
-tenure <- read_csv("phoenix-az-tenure.csv", show_col_types = FALSE)
-occupancy_status <- read_csv("phoenix-az-occupancy-status.csv", show_col_types = FALSE)
+tenure <- read_csv("data/phoenix-az-tenure.csv", show_col_types = FALSE)
+occupancy_status <- read_csv("data/phoenix-az-occupancy-status.csv", show_col_types = FALSE)
 
 # economic data
-poverty_status <- read_csv("phoenix-az-poverty-status.csv", show_col_types = FALSE)
-median_gross_rent <- read_csv("phoenix-az-median-gross-rent.csv", show_col_types = FALSE)
-median_income <- read_csv("phoenix-az-median-household-income.csv", show_col_types = FALSE)
+poverty_status <- read_csv("data/phoenix-az-poverty-status.csv", show_col_types = FALSE)
+median_gross_rent <- read_csv("data/phoenix-az-median-gross-rent.csv", show_col_types = FALSE)
+median_income <- read_csv("data/phoenix-az-median-household-income.csv", show_col_types = FALSE)
 ```
 
 ## Data Cleaning:

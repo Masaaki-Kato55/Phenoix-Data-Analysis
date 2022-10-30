@@ -18,16 +18,16 @@ library(rsconnect)
 ```
 
 ```{r DataLoad, include=FALSE}
-median_income_cleaned <- read_csv("median_income_cleaned.csv", show_col_types = FALSE)
-median_gross_rent_cleaned <- read_csv("median_gross_rent_cleaned.csv", show_col_types = FALSE)
-occupancy_status_cleaned <- read_csv("occupancy_status_cleaned.csv", show_col_types = FALSE)
-poverty_status_female <- read_csv("poverty_status_female.csv", show_col_types = FALSE)
-poverty_status_male <- read_csv("poverty_status_male.csv", show_col_types = FALSE)
-sex_by_age_male <- read_csv("sex_by_age_male.csv", show_col_types = FALSE)
-sex_by_age_female <- read_csv("sex_by_age_female.csv", show_col_types = FALSE)
-sex_by_edu_male <- read_csv("sex_by_edu_male.csv", show_col_types = FALSE)
-sex_by_edu_female <- read_csv("sex_by_edu_female.csv", show_col_types = FALSE)
-tenure_cleaned <- read_csv("tenure_cleaned.csv", show_col_types = FALSE)
+median_income_cleaned <- read_csv("data/median_income_cleaned.csv", show_col_types = FALSE)
+median_gross_rent_cleaned <- read_csv("data/median_gross_rent_cleaned.csv", show_col_types = FALSE)
+occupancy_status_cleaned <- read_csv("data/occupancy_status_cleaned.csv", show_col_types = FALSE)
+poverty_status_female <- read_csv("data/poverty_status_female.csv", show_col_types = FALSE)
+poverty_status_male <- read_csv("data/poverty_status_male.csv", show_col_types = FALSE)
+sex_by_age_male <- read_csv("data/sex_by_age_male.csv", show_col_types = FALSE)
+sex_by_age_female <- read_csv("data/sex_by_age_female.csv", show_col_types = FALSE)
+sex_by_edu_male <- read_csv("data/sex_by_edu_male.csv", show_col_types = FALSE)
+sex_by_edu_female <- read_csv("data/sex_by_edu_female.csv", show_col_types = FALSE)
+tenure_cleaned <- read_csv("data/tenure_cleaned.csv", show_col_types = FALSE)
 ```
 
 -----------------------------------------------------------------------
